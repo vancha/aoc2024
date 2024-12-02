@@ -1032,10 +1032,13 @@ result = 0
 
 
 def generate_permutations(original_list):
-    duplicates = [original_list]*len(original_list)
-    print(duplicates)
+    duplicates = []#original_list]*len(original_list)
 
-    return []
+    for index in range(len(original_list)-1):
+        duplicates.append(original_list.copy())
+        duplicates[index].pop(index)
+
+    return duplicates
 
 for line in input.split('\n'):
     characters = line.split(" ")
@@ -1043,8 +1046,11 @@ for line in input.split('\n'):
     if (strictly_increasing(numberlist) or strictly_decreasing(numberlist)) and level_difference(numberlist):
         result += 1
     else:
-        #if the current list has N values, generate n-1 new lists from it. Every list has one digit removed. If any of those lists are valid, still increment the result with one. 
-        generate_permutations(numberlist)
+        #if the current list has N values, generate n-1 new lists from it. Every list has one digit removed. If any of those lists are valid, still increment the result with one.
+        for permutation in generate_permutations(numberlist):
+            if (strictly_increasing(permutation) or strictly_decreasing(permutation)) and level_difference(permutation):
+                result += 1
+                break
+
 
 print(result)
-        
