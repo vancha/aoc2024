@@ -1,9 +1,3 @@
-#input_str = """....X
-#.....
-#.S...
-#..A..
-#...M."""
-
 input_str = """MMAMMMSAXAXXAXMASMMASAMXMAMMAMXXXXXSMSXMMMXMXXSXASAMXMAMMXSAMXXXXMSSMXMASMMMSMSSSSSXMXSASMSMMMMMXAMXAXMMSMMAXSSSXSXMXAMXMXSXSMSSXSAMXXXMXMXM
 ASASAAMXMXMMMXAXAXSSMXSASASMSSXMMSMMSAMXMMSSMASAMXMXMMMSMMMASMXSAMAMMXMAMAAXAAXAAAAMMSAMXAAXAASMSSSMSSSMAAMXMAAXMMASMSSMMXMAXAAAASAMXSXMASAM
 MSASMSSMMAAASMXSMMXAAMSAMASAAAMAAAASXMAXSAAAMSMMXAMAMAMAXAXAXAASMMAMMXMASXMSMSMMMMMAXMASMXMSXXMAAXAAAAASXMMAAMSMMSAMXAAXXAMXMMMSMSASAAASASXS
@@ -145,69 +139,37 @@ SSMMSMXAXAAMAMMMMMASAMAMXMAXMMSMSMMAMAAXAAXAAAAMMMSMMSAMXMSSSMMSASMSMMAMAMSMMMSA
 MAAAXXMSSMMMAMAAAMXSAMXSAMXMAXSAMXSASMSSSMSASXSMXAAAXXAMAMAXXAMSASAAMSAMASXAAASAMSXMXSAMASAAAAXAAXAAMSMMXAAMMSASAAAAAASASXSAAMSSMASXSXSASMAS
 SSMMSXMASMXSXSSSSSXSMMASMSXSSMMMMMSMSXXMMAMXMAMAMSSSMSSMXMASMSMMXMXMMAXSXSXMMXMSAMXXASXMMMMMMMMSMMSSXXMASXMMAMASMMSSMMSSXMSAMSAAXMAMXXMASXMM"""
 
-def find_x_positions(input_grid):
+def find_a_positions(input_grid):
     positions = []
     
     for ri, row in enumerate(input_grid):
         for ci, col in enumerate(row):
-            if input_grid[ri][ci] == 'X':
-                print("X",end="")
+            if input_grid[ri][ci] == 'A':
                 positions.append([ri,ci])
-            else:
-                print(".",end="")
-        print("")
     
-    #supposed to hold 19 X's
-    print(f"{len(positions)}: {positions}")
     return positions
 
-def number_of_masses(input_grid, x_position):
-    row,col = x_position
-    total = 0
+def number_of_x_masses(input_grid, a_position):
+    ri,ci = a_position
+    result = 0
+    if ri >= 1 and ri < len(input_grid)-1 and ci >= 1 and ci < len(input_grid[0])-1:
+        tlbr = (input_grid[ri-1][ci-1] == 'S' and input_grid[ri+1][ci+1] == 'M') or (input_grid[ri-1][ci-1] == 'M' and input_grid[ri+1][ci+1] == 'S') 
+        trbl = (input_grid[ri-1][ci+1] == 'S' and input_grid[ri+1][ci-1] == 'M') or (input_grid[ri-1][ci+1] == 'M' and input_grid[ri+1][ci-1] == 'S') 
+        if tlbr and trbl:
+            result += 1
 
-    #to the right of the x
-    if col < len(input_grid[0])-3 and input_grid[row][col:col+4] == "XMAS":
-        total += 1
+    
+    return result
 
-    #to the left of the x
-    if col >= 3 and input_grid[row][col-3:col+1] == "SAMX":
-        total += 1
-
-    #above the x
-    if row >= 3 and "".join([input_grid[row-1][col],input_grid[row-2][col],input_grid[row-3][col]]) == "MAS":
-        total += 1
-
-    #below the x
-    if row < len(input_grid)-3 and "".join([input_grid[row+1][col],input_grid[row+2][col],input_grid[row+3][col]]) == "MAS":
-        total += 1
-
-    #now the diagonals, to bottom right
-    if row < len(input_grid)-3 and col < len(input_grid[0])-3 and  "".join([input_grid[row+1][col+1],input_grid[row+2][col+2],input_grid[row+3][col+3]]) == "MAS":
-        total += 1
-
-    #to bottom left
-    if row < len(input_grid)-3 and col >= 3 and "".join([input_grid[row+1][col-1],input_grid[row+2][col-2],input_grid[row+3][col-3]]) == "MAS":
-        total += 1
-
-    #to top left
-    if col >= 3 and row >= 3 and "".join([input_grid[row-1][col-1],input_grid[row-2][col-2],input_grid[row-3][col-3]]) == "MAS":
-        print(f"found something to the top left!")
-        total += 1
-
-    #to top right
-    if row >= 3 and col < len(input_grid[0])-3 and  "".join([input_grid[row-1][col+1],input_grid[row-2][col+2],input_grid[row-3][col+3]]) == "MAS":
-        total += 1
-
-    return total
 
 input_grid = input_str.split('\n')
 
 result = 0
 
 #take all the x positions
-for x_position in find_x_positions(input_grid):
+for a_position in find_a_positions(input_grid):
     #add the number of connected words to the result
-    result +=  number_of_masses(input_grid, x_position)
+    result +=  number_of_x_masses(input_grid, a_position)
 
 
 #why doesn't this hold the correct answer? T.T
